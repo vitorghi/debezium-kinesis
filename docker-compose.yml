@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+
+  localstack:
+    build:
+      context: ./docker/localstack
+    environment:
+      - "HOSTNAME_EXTERNAL=localstack"
+    ports:
+      - "4576:4576"
+      - "4568:4568"
+      - "4569:4569"
+
+  mysql:
+    image: debezium/example-mysql:0.9
+    environment:
+      - MYSQL_USER=mysqluser
+      - MYSQL_ROOT_PASSWORD=debezium
+      - MYSQL_PASSWORD=mysqlpw
+    ports:
+      - "3306:3306"
