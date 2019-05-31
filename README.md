@@ -1,6 +1,8 @@
 # debezium-kinesis
 Validating embedded debezium streaming change data into Kinesis
 
+It's expected to have AWS CLI configured (must run `aws configure` with a default profile) and Java 8
+
 # Run with
 
 > docker-compose up
