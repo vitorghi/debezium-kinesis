@@ -17,4 +17,4 @@ Then start debezium with:
 
 > mvn exec:java
 
-When needed, use the bash script *get-records* to stream kinesis into console with: `./get-records.sh`
+To verify if data is being streamed, use the bash script *get-records* to stream kinesis into console with: `./get-records.sh`
