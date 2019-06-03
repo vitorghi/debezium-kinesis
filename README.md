@@ -5,6 +5,7 @@ It's expected to have:
 - AWS CLI configured (must run `aws configure` with a default profile) 
 - Java 8
 - maven 3+
+- jq, CLI utils for json
 
 # Run with
 
