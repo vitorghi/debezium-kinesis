@@ -10,6 +10,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
+        <testEnvironment>true</testEnvironment>
         <database.hostname>localhost</database.hostname>
         <database.port>3306</database.port>
         <database.user>debezium</database.user>
@@ -18,6 +19,7 @@
         <table.whitelist>inventory.customers</table.whitelist>
 
         <kinesis.region>eu-central-1</kinesis.region>
+        <kinesis.stream>SomeStream</kinesis.stream>
 
         <mysql.init.timeout>30000</mysql.init.timeout>
 
@@ -117,6 +119,14 @@
                         <systemProperty>
                             <key>kinesis.region</key>
                             <value>${kinesis.region}</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <key>kinesis.stream</key>
+                            <value>${kinesis.stream}</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <key>testEnvironment</key>
+                            <value>${testEnvironment}</value>
                         </systemProperty>
                     </systemProperties>
                 </configuration>

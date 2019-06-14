@@ -28,21 +28,23 @@ import java.util.function.Function;
 
 /**
  * Demo for using the Debezium Embedded API to send change events to Amazon Kinesis.
+ * <p>
+ * Using synchronous kinesis API. For production it's needed to use KPL.
  */
 public class ChangeDataSender implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeDataSender.class);
 
-    private static final String APP_NAME = "kinesis";
+    private static final String APP_NAME = "debeziumKinesisConnector";
     private static final String KINESIS_REGION_CONF_NAME = "kinesis.region";
+    private static final String KINESIS_STREAM_CONF_NAME = "kinesis.stream";
 
     private final Configuration config;
     private final JsonConverter valueConverter;
     private final AmazonKinesis kinesisClient;
 
     private ChangeDataSender() {
-        System.setProperty("com.amazonaws.sdk.disableCbor", "true");
-        config = Configuration.empty().withSystemProperties(Function.identity()).edit()
+        this.config = Configuration.empty().withSystemProperties(Function.identity()).edit()
                 .with(EmbeddedEngine.CONNECTOR_CLASS, "io.debezium.connector.mysql.MySqlConnector")
                 .with(EmbeddedEngine.ENGINE_NAME, APP_NAME)
                 .with(MySqlConnectorConfig.SERVER_NAME, APP_NAME)
@@ -56,19 +58,26 @@ public class ChangeDataSender implements Runnable {
                 .with("schemas.enable", false)
                 .build();
 
-        valueConverter = new JsonConverter();
-        valueConverter.configure(config.asMap(), false);
+        this.valueConverter = new JsonConverter();
+        this.valueConverter.configure(config.asMap(), false);
 
         final String regionName = config.getString(KINESIS_REGION_CONF_NAME);
 
         final AWSCredentialsProvider credentialsProvider = new ProfileCredentialsProvider("default");
 
-        AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder.EndpointConfiguration("http://localhost:4568", regionName);
+        AmazonKinesisClientBuilder kinesisClientBuilder = AmazonKinesisClientBuilder.standard()
+                .withCredentials(credentialsProvider);
 
-        kinesisClient = AmazonKinesisClientBuilder.standard()
-                .withCredentials(credentialsProvider)
-                .withEndpointConfiguration(endpoint)
-                .build();
+        if (System.getProperty("testEnvironment").equals("true")) {
+            LOGGER.warn("Running in local environment.");
+            AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder
+                    .EndpointConfiguration("http://localhost:4568", regionName);
+
+            kinesisClientBuilder.withEndpointConfiguration(endpoint);
+            System.setProperty("com.amazonaws.sdk.disableCbor", "true");
+        }
+
+        this.kinesisClient = kinesisClientBuilder.build();
     }
 
     @Override
@@ -130,19 +139,18 @@ public class ChangeDataSender implements Runnable {
         }
 
         String partitionKey = String.valueOf(record.key() != null ? record.key().hashCode() : -1);
-        final byte[] payload = valueConverter.fromConnectData("dummy", schema, message);
+        final byte[] payload = valueConverter.fromConnectData("KafkaTopic", schema, message);
 
         PutRecordRequest putRecord = new PutRecordRequest();
-        putRecord.setStreamName("SomeStream");
+        putRecord.setStreamName(config.getString(KINESIS_STREAM_CONF_NAME));
         putRecord.setPartitionKey(partitionKey);
         putRecord.setData(ByteBuffer.wrap(payload));
-        LOGGER.info(putRecord.toString());
 
         PutRecordResult putRecordResult = kinesisClient.putRecord(putRecord);
-        LOGGER.info(putRecordResult.toString());
+        LOGGER.info("Result: " + putRecordResult.toString());
     }
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         new ChangeDataSender().run();
     }
 }

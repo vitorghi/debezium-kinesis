@@ -13,7 +13,7 @@ It's expected to have:
 
 Docker compose will start localstack and a mysql prepopulated database.
 
-Then start debezium with:
+Then start debezium locally with:
 > mvn clean install
 
 > mvn exec:java
