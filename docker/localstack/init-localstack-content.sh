@@ -8,7 +8,7 @@ SQS_CONFIG="--cli-read-timeout=1 --endpoint-url=$SQS_ENDPOINT"
 DYNAMO_ENDPOINT="${DYNAMO_ENDPOINT:-http://localhost:4569/}"
 DYNAMO_CONFIG="--cli-read-timeout=1 --endpoint-url=$DYNAMO_ENDPOINT"
 
-KINESIS_STREAM="SomeStream"
+KINESIS_STREAM="customersStream addressesStream customerAddressesStream"
 KINESIS_ENDPOINT="${KINESIS_ENDPOINT:-http://localhost:4568/}"
 KINESIS_CONFIG="--cli-read-timeout=1 --endpoint-url=$KINESIS_ENDPOINT"
 
