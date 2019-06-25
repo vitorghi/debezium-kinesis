@@ -17,11 +17,9 @@
         <database.password>dbz</database.password>
         <database.whitelist>inventory</database.whitelist>
         <table.whitelist>inventory.customers</table.whitelist>
+        <mysql.init.timeout>30000</mysql.init.timeout>
 
         <kinesis.region>eu-central-1</kinesis.region>
-        <kinesis.stream>SomeStream</kinesis.stream>
-
-        <mysql.init.timeout>30000</mysql.init.timeout>
 
         <version.debezium>0.9.5.Final</version.debezium>
         <version.debezium.tag>0.8</version.debezium.tag>
@@ -119,10 +117,6 @@
                         <systemProperty>
                             <key>kinesis.region</key>
                             <value>${kinesis.region}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <key>kinesis.stream</key>
-                            <value>${kinesis.stream}</value>
                         </systemProperty>
                         <systemProperty>
                             <key>testEnvironment</key>
