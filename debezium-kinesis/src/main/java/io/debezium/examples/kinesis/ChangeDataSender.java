@@ -87,6 +87,7 @@ public class ChangeDataSender implements Runnable {
                 .using(config)
                 .using(this.getClass().getClassLoader())
                 .using(Clock.SYSTEM)
+                // Method that will receive each data capture event
                 .notifying(this::sendRecord)
                 .build();
 
@@ -143,6 +144,7 @@ public class ChangeDataSender implements Runnable {
 
         PutRecordRequest putRecord = new PutRecordRequest();
 
+        // For each table, the record will be sent to its respective stream.
         String tableName = message.getStruct("value").getStruct("source").getString("table");
         putRecord.setStreamName(tableName + "Stream");
 
@@ -150,7 +152,7 @@ public class ChangeDataSender implements Runnable {
         putRecord.setData(ByteBuffer.wrap(payload));
 
         PutRecordResult putRecordResult = kinesisClient.putRecord(putRecord);
-        LOGGER.info("Result: " + putRecordResult.toString());
+        LOGGER.info("Result: {}", putRecordResult);
     }
 
     public static void main(String... args) {
