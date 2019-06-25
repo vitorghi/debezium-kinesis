@@ -1,4 +1,9 @@
-streamname="SomeStream"
+streamname="customerAddressesStream"
+if [ -n "$1" ]
+  then
+    streamname=$1
+fi
+echo Retrieving records for $streamname...
 iteratorType="LATEST"
 
 shard=$(awslocal kinesis describe-stream --stream-name $streamname --query 'StreamDescription.Shards[0].ShardId' --output text)
