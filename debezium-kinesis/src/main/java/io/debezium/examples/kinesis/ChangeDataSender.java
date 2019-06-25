@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
- * Demo for using the Debezium Embedded API to send change events to Amazon Kinesis.
+ * PoC for using the Debezium Embedded API to send change events to Amazon Kinesis.
  * <p>
  * Using synchronous kinesis API. For production it's needed to use KPL.
  */
@@ -49,7 +49,7 @@ public class ChangeDataSender implements Runnable {
                 .with(MySqlConnectorConfig.SERVER_NAME, APP_NAME)
                 .with(MySqlConnectorConfig.SERVER_ID, 8192)
 
-                // for demo purposes let's store offsets and history only in memory
+                // for demo purposes offsets and history will be stored only in memory
                 .with(EmbeddedEngine.OFFSET_STORAGE, "org.apache.kafka.connect.storage.MemoryOffsetBackingStore")
                 .with(MySqlConnectorConfig.DATABASE_HISTORY, MemoryDatabaseHistory.class.getName())
 
@@ -73,6 +73,8 @@ public class ChangeDataSender implements Runnable {
                     .EndpointConfiguration("http://localhost:4568", regionName);
 
             kinesisClientBuilder.withEndpointConfiguration(endpoint);
+
+            // Localstack isn't able to communicate with the default Cbor protocol
             System.setProperty("com.amazonaws.sdk.disableCbor", "true");
         }
 
