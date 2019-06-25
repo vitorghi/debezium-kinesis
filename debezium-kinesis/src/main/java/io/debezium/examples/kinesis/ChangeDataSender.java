@@ -37,7 +37,6 @@ public class ChangeDataSender implements Runnable {
 
     private static final String APP_NAME = "debeziumKinesisConnector";
     private static final String KINESIS_REGION_CONF_NAME = "kinesis.region";
-    private static final String KINESIS_STREAM_CONF_NAME = "kinesis.stream";
 
     private final Configuration config;
     private final JsonConverter valueConverter;
@@ -112,7 +111,6 @@ public class ChangeDataSender implements Runnable {
     }
 
     private void sendRecord(SourceRecord record) {
-        // We are interested only in data events not schema change events
         if (record.topic().equals(APP_NAME)) {
             return;
         }
@@ -142,7 +140,10 @@ public class ChangeDataSender implements Runnable {
         final byte[] payload = valueConverter.fromConnectData("KafkaTopic", schema, message);
 
         PutRecordRequest putRecord = new PutRecordRequest();
-        putRecord.setStreamName(config.getString(KINESIS_STREAM_CONF_NAME));
+
+        String tableName = message.getStruct("value").getStruct("source").getString("table");
+        putRecord.setStreamName(tableName + "Stream");
+
         putRecord.setPartitionKey(partitionKey);
         putRecord.setData(ByteBuffer.wrap(payload));
 
