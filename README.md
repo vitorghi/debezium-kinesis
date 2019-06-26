@@ -2,7 +2,8 @@
 Validating embedded debezium, streaming change data into Kinesis
 
 It's expected to have:
-- AWS CLI configured (must run `aws configure` with a default profile) 
+- AWS CLI configured (must run `aws configure` with a default profile)
+- awscli-local installed, `pip install awscli-local`
 - Java 8
 - maven 3+
 - jq (CLI utils for json)
