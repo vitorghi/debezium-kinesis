@@ -6,7 +6,7 @@ It's expected to have:
 - awscli-local installed, `pip install awscli-local`
 - Java 8
 - maven 3+
-- jq (CLI utils for json)
+- jq (CLI utils for json, used in the bash script to print stream records)
 
 # Run with
 
