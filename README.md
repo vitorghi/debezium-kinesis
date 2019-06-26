@@ -18,7 +18,7 @@ Then start debezium(inside debezium-kinesis folder) locally with:
 
 > mvn exec:java
 
-To verify if data is being streamed, use the bash script *get-records* to stream kinesis into console with: `./get-records.sh`. The script accepts the stream name as parameter, if no argument it runs with the stream provided in the custom localstack image.
+To verify if data is being streamed, use the bash script *get-records* to stream kinesis into console with: `./get-records.sh`. The script accepts the stream name as parameter, if argument is not provided, it runs with the stream provided in the custom localstack image.
 
 To run Kinesis analytics locally:
 
