@@ -21,6 +21,8 @@ Then start debezium(inside debezium-kinesis folder) locally with:
 
 To verify if data is being streamed, use the bash script *get-records* to stream kinesis into console with: `./get-records.sh`. The script accepts the stream name as parameter, if argument is not provided, it runs with the stream provided in the custom localstack image.
 
-To run Kinesis analytics locally:
+To run Flink/Kinesis analytics locally:
 
-Just run the main method inside the BasicStreamingJob java class.
+First, some steps are needed to use kinesis connector, follow this link: https://ci.apache.org/projects/flink/flink-docs-stable/dev/connectors/kinesis.html
+
+Then just run the main method inside the BasicStreamingJob java class.
