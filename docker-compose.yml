@@ -7,10 +7,10 @@ services:
       context: ./docker/localstack
     environment:
       - "HOSTNAME_EXTERNAL=localstack"
+      - "AWS_CBOR_DISABLE=true"
+      - "USE_SSL=true"
     ports:
-      - "4576:4576"
       - "4568:4568"
-      - "4569:4569"
 
   mysql:
     image: debezium/example-mysql:0.9

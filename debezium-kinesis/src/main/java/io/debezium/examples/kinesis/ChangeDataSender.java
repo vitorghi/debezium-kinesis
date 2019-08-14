@@ -70,12 +70,13 @@ public class ChangeDataSender implements Runnable {
         if (System.getProperty("testEnvironment").equals("true")) {
             LOGGER.warn("Running in local environment.");
             AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder
-                    .EndpointConfiguration("http://localhost:4568", regionName);
+                    .EndpointConfiguration("https://localhost:4568", regionName);
 
             kinesisClientBuilder.withEndpointConfiguration(endpoint);
 
             // Localstack isn't able to communicate with the default Cbor protocol
             System.setProperty("com.amazonaws.sdk.disableCbor", "true");
+            System.setProperty("com.amazonaws.sdk.disableCertChecking", "true");
         }
 
         this.kinesisClient = kinesisClientBuilder.build();

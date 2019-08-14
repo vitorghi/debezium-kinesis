@@ -25,5 +25,6 @@ hs_err_pid*
 target/
 .idea/
 *.iml
+*.swp
 
 .DS_Store
