@@ -3,11 +3,13 @@ package com.amazonaws.services.kinesisanalytics;
 import com.amazonaws.services.kinesisanalytics.models.Address;
 import com.amazonaws.services.kinesisanalytics.models.Customer;
 import com.amazonaws.services.kinesisanalytics.models.CustomerAddress;
+import com.amazonaws.services.kinesisanalytics.models.Order;
 import org.apache.flink.formats.json.JsonNodeDeserializationSchema;
 import org.apache.flink.kinesis.shaded.com.amazonaws.SDKGlobalConfiguration;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.AsyncDataStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
@@ -18,6 +20,7 @@ import org.apache.flink.streaming.connectors.kinesis.config.AWSConfigConstants;
 import org.apache.flink.streaming.connectors.kinesis.config.ConsumerConfigConstants;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Basic Flink application using Java with Kinesis
@@ -27,6 +30,7 @@ public class BasicStreamingJob {
     private static final String REGION = "us-east-1";
     private static final String CUSTOMER_STREAM_NAME = "customersStream";
     private static final String ADDRESS_STREAM_NAME = "addressesStream";
+    private static final String ORDER_STREAM_NAME = "ordersStream";
     private static final String OUTPUT_STREAM_NAME = "customerAddressesStream";
 
     private static Properties createSourceFromStaticConfig() {
@@ -94,6 +98,14 @@ public class BasicStreamingJob {
                 .window(TumblingEventTimeWindows.of(Time.seconds(15L)))
                 .apply(BasicStreamingJob::transform)
                 .addSink(createSinkFromStaticConfig());
+
+        DataStream<Integer> productIdStream = getDataStream(env, ORDER_STREAM_NAME, Order.class)
+                .map(Order::getProduct_id);
+
+        AsyncDataStream
+                .unorderedWait(productIdStream, new AsyncDatabaseRequest(), 1, TimeUnit.SECONDS)
+                .print()
+                .setParallelism(1);
 
         env.execute("Flink kinesis analytics running");
     }

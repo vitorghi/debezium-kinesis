@@ -1,7 +1,7 @@
 #!/bin/bash
 # This script will run inside docker container.
 
-KINESIS_STREAM="customersStream addressesStream customerAddressesStream"
+KINESIS_STREAM="customersStream addressesStream customerAddressesStream ordersStream"
 KINESIS_ENDPOINT="${KINESIS_ENDPOINT:-https://localhost:4568/}"
 KINESIS_CONFIG="--cli-read-timeout=1 --endpoint-url=$KINESIS_ENDPOINT --no-verify-ssl"
 
